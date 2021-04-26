@@ -121,8 +121,18 @@ int initialize(listNode** h) {
 }
 
 /* 메모리 해제 */
-int freeList(listNode* h){
+int freeList(listNode* h)
+{
+	listNode* p = h;
+	listNode* prev = NULL;
 
+	while(p != NULL)
+	{
+		prev = p;
+		p = p->rlink;
+		free(prev);
+	}
+	free(h);
 	return 0;
 }
 
@@ -169,39 +179,108 @@ void printList(listNode* h) {
 /**
  * list에 key에 대한 노드하나를 추가
  */
-int insertLast(listNode* h, int key) {
+int insertLast(listNode* h, int key) 
+{
+	listNode* temp;
+	temp = h;
 
-	return 1;
+	listNode* newnode = (listNode*)malloc(sizeof(listNode));
+	newnode->key = key;
+
+	if(temp->rlink == h)
+	{
+		newnode->rlink = h;
+		newnode->llink = temp;
+		temp->rlink = newnode;
+		h->llink = newnode;
+		return 0;
+	}
+	else
+	{
+		while(temp->rlink != h)
+		{
+			temp = temp->rlink;
+		}
+
+		newnode->rlink = h;
+		newnode->llink = temp;
+		temp->rlink = newnode;
+		h->llink = newnode;
+		return 0;
+	}
 }
 
 
 /**
  * list의 마지막 노드 삭제
  */
-int deleteLast(listNode* h) {
+int deleteLast(listNode* h) 
+{
+	listNode* temp;
+	temp = h;
 
-
-	return 1;
+	if(temp->rlink == h)
+	{
+		temp->llink->rlink = h;
+		h->llink = temp->llink;
+		free(temp);
+		return 0;
+	}
+	else
+	{
+		temp->llink = temp->llink->llink;
+		temp->llink->rlink = h;
+		free(temp);
+		return 0;
+	}
 }
 
 
 /**
  * list 처음에 key에 대한 노드하나를 추가
  */
-int insertFirst(listNode* h, int key) {
+int insertFirst(listNode* h, int key)
+{
+	listNode* newnode = (listNode*)malloc(sizeof(listNode));
+	newnode->key = key;
 
-
-	return 1;
+	if(h == NULL)
+	{
+		newnode->rlink = h;
+		h->rlink = newnode;
+		h->llink = newnode;
+		return 0;
+	}
+	else
+	{
+		newnode->rlink = h->rlink;
+		newnode->llink = h;
+		h->rlink = newnode;
+		return 0;
+	}
 }
 
 /**
  * list의 첫번째 노드 삭제
  */
-int deleteFirst(listNode* h) {
+int deleteFirst(listNode* h) 
+{
+	listNode* temp;
+	temp = h;
 
-
-	return 1;
-
+	if(h->rlink == h->llink)
+	{
+		temp->rlink = NULL;
+		temp->llink = NULL;
+		free(temp);
+		return 0;
+	}
+	else
+	{
+		temp->rlink = temp->rlink->rlink;
+		free(temp);
+		return 0;
+	}
 }
 
 
@@ -219,18 +298,71 @@ int invertList(listNode* h) {
 /**
  *  리스트를 검색하여, 입력받은 key보다 큰값이 나오는 노드 바로 앞에 삽입 
  **/
-int insertNode(listNode* h, int key) {
+int insertNode(listNode* h, int key)
+{
+	listNode* temp;
+	temp = h;
 
-	return 0;
+	if(h->rlink == NULL)
+	{
+		insertFirst(h, key);
+		return 0;
+	}
+	else
+	{
+		while(temp->rlink != h)
+		{
+			if(key < temp->rlink->key)
+			{
+				listNode* newnode = (listNode*)malloc(sizeof(listNode));
+				newnode->key = key;
+				newnode->llink = temp;
+				newnode->rlink = temp->rlink;
+				temp->rlink->llink = newnode;
+				temp->rlink = newnode;
+				return 0;
+			}
+			temp = temp->rlink;
+		}
+
+		if(temp->rlink == h)
+		{
+			insertLast(h, key);
+			return 0;
+		}
+	}
 }
 
 
 /**
  * list에서 key에 대한 노드 삭제
  */
-int deleteNode(listNode* h, int key) {
+int deleteNode(listNode* h, int key) 
+{
+	listNode* temp;
+	temp = h;
 
-	return 0;
+	while(temp->rlink != h)
+	{
+		if(temp->key == key)
+		{
+			if(temp == h)
+			{
+				deleteFirst(h);
+				return 0;
+			}
+
+			temp->llink->rlink = temp->rlink;
+			temp->rlink->llink = temp->llink;
+			free(temp);
+			return 0;
+		}
+		temp = temp->rlink;
+	}
+
+	if(temp->rlink == h)
+	{
+		deleteLast(temp);
+		return 0;
+	}
 }
-
-
