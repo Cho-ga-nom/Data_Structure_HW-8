@@ -42,6 +42,8 @@ int main()
 	int key;
 	listNode* headnode=NULL;
 
+	printf("[----- [2018038084 조수현] -----]\n\n");
+
 	do{
 		printf("----------------------------------------------------------------\n");
 		printf("                  Doubly Circular Linked List                   \n");
@@ -126,7 +128,7 @@ int freeList(listNode* h)
 	listNode* p = h;
 	listNode* prev = NULL;
 
-	while(p != NULL)
+	while(p->rlink != h)
 	{
 		prev = p;
 		p = p->rlink;
@@ -135,7 +137,6 @@ int freeList(listNode* h)
 	free(h);
 	return 0;
 }
-
 
 
 void printList(listNode* h) {
@@ -287,9 +288,22 @@ int deleteFirst(listNode* h)
 /**
  * 리스트의 링크를 역순으로 재 배치
  */
-int invertList(listNode* h) {
+int invertList(listNode* h)
+{
+	listNode* lead;
+	listNode* trail;
+	lead = h;
+	h->llink = h->rlink;
 
+	while(lead->rlink != h)
+	{
+		trail = lead;
+		lead = lead->rlink;
+		lead->llink = lead->rlink;
+		lead->rlink = trail;
+	}
 
+	h->rlink = lead;
 	return 0;
 }
 
